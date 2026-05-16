@@ -5,7 +5,6 @@ import {
   Code2,
   Sparkles,
   Wind,
-  Server,
   Coffee,
   Leaf,
   Database,
