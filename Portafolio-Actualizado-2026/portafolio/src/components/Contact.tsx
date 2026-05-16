@@ -1,0 +1,85 @@
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
+import BlurText from './core/BlurText'
+import { ease } from '../lib/easing'
+
+export default function Contact() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+
+  return (
+    <section id="contacto" className="contact" ref={ref}>
+      <div className="contact__top">
+        <motion.span
+          className="section-label contact__label"
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6 }}
+        >
+          ¿Tenés un proyecto?
+        </motion.span>
+
+        <h2 className="contact__cta">
+          <BlurText
+            text="Construyamos"
+            animateBy="words"
+            direction="top"
+            delay={120}
+            stepDuration={0.5}
+            threshold={0.2}
+            className="contact__cta-line"
+          />
+          <BlurText
+            text="algo juntos"
+            animateBy="words"
+            direction="top"
+            delay={400}
+            stepDuration={0.5}
+            threshold={0.2}
+            className="contact__cta-line accent"
+          />
+        </h2>
+
+        <motion.div
+          className="contact__actions"
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7, ease, delay: 0.3 }}
+        >
+          <a href="mailto:tiagodavila08@gmail.com" className="pill-btn pill-btn--accent">
+            tiagodavila08@gmail.com
+          </a>
+          <a
+            href="https://www.linkedin.com/in/tiago-davila-895b51231/"
+            target="_blank"
+            className="pill-btn pill-btn--secondary"
+          >
+            LinkedIn ↗
+          </a>
+          <a
+            href="https://github.com/portafoliotiago"
+            target="_blank"
+            className="pill-btn pill-btn--secondary"
+          >
+            GitHub ↗
+          </a>
+        </motion.div>
+      </div>
+
+      <motion.footer
+        className="footer"
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.7, delay: 0.5 }}
+      >
+        <span className="footer__left">T.</span>
+        <span className="footer__copy">© 2026 Tiago Dávila. Todos los derechos reservados.</span>
+        <nav className="footer__links">
+          <a href="https://github.com/portafoliotiago" target="_blank" className="footer__link">GitHub</a>
+          <a href="https://www.linkedin.com/in/tiago-davila-895b51231/" target="_blank" className="footer__link">LinkedIn</a>
+          <a href="mailto:tiagodavila08@gmail.com" className="footer__link">Email</a>
+        </nav>
+      </motion.footer>
+    </section>
+  )
+}
