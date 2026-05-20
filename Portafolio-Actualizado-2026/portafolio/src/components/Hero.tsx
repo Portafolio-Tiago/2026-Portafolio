@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { motion } from 'framer-motion'
 import { ease } from '../lib/easing'
 import BotScene from './BotScene'
+import { useLang } from '../context/LanguageContext'
 
 const container = {
   hidden: {},
@@ -17,6 +18,8 @@ const fadeUp = {
 }
 
 export default function Hero() {
+  const { t } = useLang()
+
   return (
     <section id="inicio" className="hero">
       <div className="container hero__inner">
@@ -24,13 +27,13 @@ export default function Hero() {
         <motion.div className="hero__content" variants={container} initial="hidden" animate="show">
           <motion.div className="hero__badge" variants={fadeUp}>
             <span className="hero__badge-dot" />
-            <span className="hero__badge-text">Disponible para proyectos</span>
+            <span className="hero__badge-text">{t('hero.available')}</span>
           </motion.div>
 
           <motion.div className="hero__text" variants={fadeUp}>
             <div className="hero__line">
               <motion.span className="hero__line-inner" style={{ fontSize: 'clamp(28px, 4vw, 52px)', fontWeight: 300, color: 'var(--text-muted)' }} variants={lineAnim} initial="hidden" animate="show">
-                Hola, soy
+                {t('hero.greeting')}
               </motion.span>
             </div>
             <div className="hero__line">
@@ -40,23 +43,23 @@ export default function Hero() {
             </div>
             <div className="hero__line">
               <motion.span className="hero__line-inner hero__sub" variants={lineAnim} initial="hidden" animate="show" transition={{ delay: 0.2, duration: 0.85, ease }}>
-                Diseño &amp;
+                {t('hero.line1')}
               </motion.span>
             </div>
             <div className="hero__line">
               <motion.span className="hero__line-inner hero__sub" variants={lineAnim} initial="hidden" animate="show" transition={{ delay: 0.3, duration: 0.85, ease }}>
-                Desarrollo 
+                {t('hero.line2')}
               </motion.span>
             </div>
           </motion.div>
 
           <motion.p className="hero__bio" variants={fadeUp}>
-            Desarrollador de aplicaciones full-stack con foco en interfaces modernas, con atención al detalle y desarrollo backend funcional.
+            {t('hero.bio')}
           </motion.p>
 
           <motion.div className="hero__actions" variants={fadeUp}>
-            <a href="#trabajo" className="pill-btn pill-btn--accent">Ver proyectos</a>
-            <a href="#sobre-mi" className="pill-btn pill-btn--secondary">Sobre mí</a>
+            <a href="#trabajo" className="pill-btn pill-btn--accent">{t('hero.cta.projects')}</a>
+            <a href="#sobre-mi" className="pill-btn pill-btn--secondary">{t('hero.cta.about')}</a>
           </motion.div>
         </motion.div>
 
@@ -81,7 +84,7 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1.6 }}
       >
-        <span>Scroll</span>
+        <span>{t('hero.scroll')}</span>
         <div className="hero__scroll-line" />
       </motion.div>
     </section>

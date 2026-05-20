@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ease } from '../lib/easing'
+import { useLang } from '../context/LanguageContext'
 
-const navItems = [
-  { label: 'Inicio', id: 'inicio' },
-  { label: 'Trabajo', id: 'trabajo' },
-  { label: 'Sobre mí', id: 'sobre-mi' },
-  { label: 'Habilidades', id: 'habilidades' },
-  { label: 'Contacto', id: 'contacto' },
+const navIds = [
+  { id: 'inicio' },
+  { id: 'trabajo' },
+  { id: 'sobre-mi' },
+  { id: 'habilidades' },
+  { id: 'contacto' },
 ]
 
 const projectItems = [
@@ -19,15 +20,17 @@ const projectItems = [
 export default function Navbar() {
   const [time, setTime] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
+  const { lang, toggleLang, t } = useLang()
 
   useEffect(() => {
+    const locale = lang === 'es' ? 'es-AR' : 'en-US'
     const update = () => {
-      setTime(new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }))
+      setTime(new Date().toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }))
     }
     update()
     const interval = setInterval(update, 1000)
     return () => clearInterval(interval)
-  }, [])
+  }, [lang])
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
@@ -40,8 +43,15 @@ export default function Navbar() {
         <div className="navbar__logo" onClick={() => scrollTo('inicio')} style={{ cursor: 'none' }}>T.</div>
         <div className="navbar__time">{time}</div>
         <div className="navbar__right">
-          <a href="mailto:tiagodavila08@gmail.com" className="pill-btn pill-btn--primary">Contacto</a>
-          <button className="pill-btn pill-btn--secondary" onClick={() => setMenuOpen(true)}>Menú</button>
+          <button
+            className="pill-btn pill-btn--lang"
+            onClick={toggleLang}
+            aria-label="Toggle language"
+          >
+            {lang === 'es' ? 'EN' : 'ES'}
+          </button>
+          <a href="mailto:tiagodavila08@gmail.com" className="pill-btn pill-btn--primary">{t('nav.contact')}</a>
+          <button className="pill-btn pill-btn--secondary" onClick={() => setMenuOpen(true)}>{t('nav.menu')}</button>
         </div>
       </nav>
 
@@ -57,8 +67,8 @@ export default function Navbar() {
             <button className="menu-close" onClick={() => setMenuOpen(false)}>✕</button>
             <nav className="menu-nav">
               <div className="menu-section">
-                <span className="section-label">Sitemap</span>
-                {navItems.map((item, i) => (
+                <span className="section-label">{t('nav.sitemap')}</span>
+                {navIds.map((item, i) => (
                   <motion.button
                     key={item.id}
                     className="menu-link"
@@ -67,12 +77,12 @@ export default function Navbar() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.07 + 0.1, ease }}
                   >
-                    {item.label}
+                    {t(`section.${item.id}`)}
                   </motion.button>
                 ))}
               </div>
               <div className="menu-section">
-                <span className="section-label">Proyectos</span>
+                <span className="section-label">{t('nav.projects')}</span>
                 {projectItems.map((p, i) => (
                   <motion.button
                     key={p.name}
@@ -88,7 +98,7 @@ export default function Navbar() {
                 ))}
               </div>
               <div className="menu-section">
-                <span className="section-label">Sígueme</span>
+                <span className="section-label">{t('nav.follow')}</span>
                 {[
                   { label: 'GitHub', href: 'https://github.com/portafoliotiago' },
                   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/tiago-davila-895b51231/' },

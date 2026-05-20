@@ -2,6 +2,7 @@ import { useRef, useEffect, useCallback, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { galleryItems, type GalleryItem } from '../data/projects'
+import { useLang } from '../context/LanguageContext'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -10,6 +11,7 @@ export default function HorizontalGallery() {
   const trackRef = useRef<HTMLDivElement>(null)
   const progressBarRef = useRef<HTMLDivElement>(null)
   const counterRef = useRef<HTMLSpanElement>(null)
+  const { t, lang } = useLang()
 
   const updateProgress = useCallback((progress: number) => {
     // Actualizar progress bar directamente via DOM (sin re-render)
@@ -79,9 +81,9 @@ export default function HorizontalGallery() {
     <section className="hgallery" ref={sectionRef} id="trabajo">
       {/* Header fijo */}
       <div className="hgallery__header">
-        <span className="section-label">Proyectos Seleccionados</span>
+        <span className="section-label">{t('gallery.label')}</span>
         <h2 className="hgallery__title">
-          Proyectos<span className="accent">.</span>
+          {t('gallery.title')}<span className="accent">.</span>
         </h2>
       </div>
 
@@ -92,6 +94,7 @@ export default function HorizontalGallery() {
             key={item.id}
             item={item}
             index={index}
+            lang={lang}
           />
         ))}
       </div>
@@ -115,9 +118,10 @@ export default function HorizontalGallery() {
 interface GalleryCardProps {
   item: GalleryItem
   index: number
+  lang: string
 }
 
-function GalleryCard({ item }: GalleryCardProps) {
+function GalleryCard({ item, lang }: GalleryCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isHovered, setIsHovered] = useState(false)
@@ -190,7 +194,7 @@ function GalleryCard({ item }: GalleryCardProps) {
         <span className="hgallery__card-project" style={{ color: item.color }}>
           {item.project}
         </span>
-        <span className="hgallery__card-label">{item.label}</span>
+        <span className="hgallery__card-label">{lang === 'en' ? item.labelEn : item.label}</span>
       </div>
 
       {/* Video indicator */}

@@ -1,18 +1,14 @@
 import { useState, useEffect } from 'react'
+import { useLang } from '../context/LanguageContext'
 
-const sections = [
-  { id: 'inicio', label: 'Inicio' },
-  { id: 'trabajo', label: 'Trabajo' },
-  { id: 'sobre-mi', label: 'Sobre mí' },
-  { id: 'habilidades', label: 'Habilidades' },
-  { id: 'contacto', label: 'Contacto' },
-]
+const sectionIds = ['inicio', 'trabajo', 'sobre-mi', 'habilidades', 'contacto']
 
 export default function Sidebar() {
   const [active, setActive] = useState('inicio')
+  const { t } = useLang()
 
   useEffect(() => {
-    const observers = sections.map(({ id }) => {
+    const observers = sectionIds.map((id) => {
       const el = document.getElementById(id)
       if (!el) return null
       const observer = new IntersectionObserver(
@@ -29,12 +25,12 @@ export default function Sidebar() {
     <aside className="sidebar">
       <span className="sidebar__name">TIAGO DÁVILA</span>
       <div className="sidebar__dots">
-        {sections.map(({ id, label }) => (
+        {sectionIds.map((id) => (
           <button
             key={id}
             className={`sidebar__dot ${active === id ? 'sidebar__dot--active' : ''}`}
             onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })}
-            title={label}
+            title={t(`section.${id}`)}
           />
         ))}
       </div>

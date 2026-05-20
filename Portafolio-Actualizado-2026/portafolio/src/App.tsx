@@ -1,3 +1,4 @@
+import { LanguageProvider } from './context/LanguageContext'
 import CustomCursor from './components/CustomCursor'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
@@ -9,7 +10,7 @@ import Contact from './components/Contact'
 
 function App() {
   return (
-    <>
+    <LanguageProvider>
       <CustomCursor />
       <Sidebar />
       <Navbar />
@@ -20,7 +21,7 @@ function App() {
         <Skills />
         <Contact />
       </main>
-    </>
+    </LanguageProvider>
   )
 }
 
