@@ -1,218 +1,267 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { CSSProperties, MouseEvent } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { galleryItems, type GalleryItem } from '../data/projects'
+import { Plus } from 'lucide-react'
+import { showcaseProjects, type ShowcaseProject } from '../data/projects'
 import { useLang } from '../context/LanguageContext'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export default function HorizontalGallery() {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
-  const progressBarRef = useRef<HTMLDivElement>(null)
+  const pinRef = useRef<HTMLDivElement>(null)
+  const stageRef = useRef<HTMLDivElement>(null)
+  const panelsRef = useRef<HTMLDivElement[]>([])
+  const progressRef = useRef<HTMLDivElement>(null)
   const counterRef = useRef<HTMLSpanElement>(null)
+  const activeVideoIndexRef = useRef<number | null>(null)
+  const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null)
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
   const { t, lang } = useLang()
 
-  const updateProgress = useCallback((progress: number) => {
-    // Actualizar progress bar directamente via DOM (sin re-render)
-    if (progressBarRef.current) {
-      const activeIndex = Math.min(
-        Math.floor(progress * galleryItems.length),
-        galleryItems.length - 1
-      )
-      const color = galleryItems[activeIndex]?.color || '#00ffc8'
-      progressBarRef.current.style.width = `${progress * 100}%`
-      progressBarRef.current.style.background = color
-    }
-    
-    // Actualizar counter
-    if (counterRef.current) {
-      const activeIndex = Math.min(
-        Math.floor(progress * galleryItems.length),
-        galleryItems.length - 1
-      )
-      counterRef.current.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(galleryItems.length).padStart(2, '0')}`
-    }
-  }, [])
-
   useEffect(() => {
-    const section = sectionRef.current
-    const track = trackRef.current
-    if (!section || !track) return
+    const section = pinRef.current
+    const stage = stageRef.current
+    const panels = panelsRef.current
+    if (!section || !stage || panels.length === 0) return
 
-    // En mobile: progress via scroll nativo del track
-    if (window.innerWidth <= 900) {
-      const handleScroll = () => {
-        const maxScroll = track.scrollWidth - track.clientWidth
-        if (maxScroll <= 0) return
-        updateProgress(track.scrollLeft / maxScroll)
-      }
-      track.addEventListener('scroll', handleScroll, { passive: true })
-      return () => track.removeEventListener('scroll', handleScroll)
+    const syncPanelVideos = (activeIndex: number) => {
+      if (activeVideoIndexRef.current === activeIndex) return
+      activeVideoIndexRef.current = activeIndex
+
+      panels.forEach((panel, index) => {
+        panel.querySelectorAll('video').forEach((video) => {
+          if (index === activeIndex) {
+            video.play().catch(() => {})
+          } else {
+            video.pause()
+          }
+        })
+      })
     }
 
-    // Calcular el ancho total del scroll
-    const getScrollWidth = () => track.scrollWidth - window.innerWidth
-
-    // Crear el ScrollTrigger con pin
     const ctx = gsap.context(() => {
-      gsap.to(track, {
-        x: () => -getScrollWidth(),
-        ease: 'none',
+      gsap.set(panels, { autoAlpha: 0, y: 36, scale: 0.985 })
+      gsap.set(panels[0], { autoAlpha: 1, y: 0, scale: 1 })
+      syncPanelVideos(0)
+
+      const timeline = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: () => `+=${getScrollWidth()}`,
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
+          end: () => `+=${window.innerHeight * (showcaseProjects.length - 1)}`,
+          pin: stage,
+          scrub: 0.85,
+          snap: {
+            snapTo: 1 / (showcaseProjects.length - 1),
+            duration: { min: 0.18, max: 0.45 },
+            ease: 'power2.out',
+          },
           invalidateOnRefresh: true,
           onUpdate: (self) => {
-            updateProgress(self.progress)
+            const activeIndex = Math.min(
+              Math.round(self.progress * (showcaseProjects.length - 1)),
+              showcaseProjects.length - 1
+            )
+
+            if (progressRef.current) {
+              progressRef.current.style.height = `${((activeIndex + 1) / showcaseProjects.length) * 100}%`
+              progressRef.current.style.background = showcaseProjects[activeIndex].accent
+            }
+
+            if (counterRef.current) {
+              counterRef.current.textContent = `${String(activeIndex + 1).padStart(2, '0')} / ${String(showcaseProjects.length).padStart(2, '0')}`
+            }
+
+            syncPanelVideos(activeIndex)
           },
         },
       })
+
+      panels.forEach((panel, index) => {
+        if (index === 0) return
+
+        timeline
+          .to(panels[index - 1], {
+            autoAlpha: 0,
+            y: -36,
+            scale: 0.985,
+            duration: 0.42,
+            ease: 'power2.inOut',
+          })
+          .to(panel, {
+            autoAlpha: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.42,
+            ease: 'power2.inOut',
+          }, '<0.12')
+      })
     }, section)
 
-    return () => ctx.revert()
-  }, [updateProgress])
+    return () => {
+      document.body.classList.remove('project-hover')
+      ctx.revert()
+    }
+  }, [])
+
+  const handlePanelMouseMove = (event: MouseEvent, project: ShowcaseProject) => {
+    if (!project.url) return
+
+    document.body.classList.add('project-hover')
+    setHoveredProjectId(project.id)
+    setCursorPosition({ x: event.clientX, y: event.clientY })
+  }
+
+  const handlePanelMouseLeave = () => {
+    document.body.classList.remove('project-hover')
+    setHoveredProjectId(null)
+  }
+
+  const handleProjectClick = (project: ShowcaseProject) => {
+    if (!project.url) return
+
+    window.open(project.url, '_blank', 'noopener,noreferrer')
+  }
 
   return (
-    <section className="hgallery" ref={sectionRef} id="trabajo">
-      {/* Header fijo */}
-      <div className="hgallery__header">
+    <section className="project-showcase" id="trabajo">
+      <div className="project-showcase__header">
         <span className="section-label">{t('gallery.label')}</span>
-        <h2 className="hgallery__title">
+        <h2 className="project-showcase__title">
           {t('gallery.title')}<span className="accent">.</span>
         </h2>
       </div>
 
-      {/* Gallery Track */}
-      <div className="hgallery__track" ref={trackRef}>
-        {galleryItems.map((item, index) => (
-          <GalleryCard
-            key={item.id}
-            item={item}
-            index={index}
-            lang={lang}
-          />
-        ))}
+      <div
+        className="project-showcase__pin"
+        ref={pinRef}
+        style={{ height: `${showcaseProjects.length * 100}vh` }}
+      >
+        <div className="project-showcase__stage" ref={stageRef}>
+        <div className="project-showcase__panels">
+          {showcaseProjects.map((project, index) => (
+            <ProjectPanel
+              key={project.id}
+              project={project}
+              lang={lang}
+              onMouseMove={handlePanelMouseMove}
+              onMouseLeave={handlePanelMouseLeave}
+              onProjectClick={handleProjectClick}
+              setRef={(node) => {
+                if (node) panelsRef.current[index] = node
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="project-showcase__progress" aria-hidden="true">
+          <div className="project-showcase__progress-track">
+            <div ref={progressRef} className="project-showcase__progress-bar" />
+          </div>
+          <span ref={counterRef} className="project-showcase__counter">
+            01 / {String(showcaseProjects.length).padStart(2, '0')}
+          </span>
+        </div>
+        </div>
       </div>
 
-      {/* Progress indicator */}
-      <div className="hgallery__progress">
-        <div className="hgallery__progress-track">
-          <div
-            ref={progressBarRef}
-            className="hgallery__progress-bar"
-          />
-        </div>
-        <span ref={counterRef} className="hgallery__counter">
-          01 / {String(galleryItems.length).padStart(2, '0')}
-        </span>
+      <div
+        className={`project-showcase__hover-cursor ${hoveredProjectId ? 'project-showcase__hover-cursor--visible' : ''}`}
+        style={{
+          transform: `translate3d(${cursorPosition.x}px, ${cursorPosition.y}px, 0) translate(-50%, -50%)`,
+        }}
+        aria-hidden="true"
+      >
+        <span>{lang === 'en' ? 'More' : 'Ver'}</span>
+        <Plus size={14} strokeWidth={2} />
       </div>
     </section>
   )
 }
 
-interface GalleryCardProps {
-  item: GalleryItem
-  index: number
+interface ProjectPanelProps {
+  project: ShowcaseProject
   lang: string
+  onMouseMove: (event: MouseEvent, project: ShowcaseProject) => void
+  onMouseLeave: () => void
+  onProjectClick: (project: ShowcaseProject) => void
+  setRef: (node: HTMLDivElement | null) => void
 }
 
-function GalleryCard({ item, lang }: GalleryCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isHovered, setIsHovered] = useState(false)
-
-  // Play/pause video on hover
-  useEffect(() => {
-    if (item.type !== 'video' || !videoRef.current) return
-
-    if (isHovered) {
-      videoRef.current.play().catch(() => {})
-    } else {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
-    }
-  }, [isHovered, item.type])
-
-  // Parallax tilt effect
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!cardRef.current) return
-
-    const rect = cardRef.current.getBoundingClientRect()
-    const x = (e.clientX - rect.left) / rect.width - 0.5
-    const y = (e.clientY - rect.top) / rect.height - 0.5
-
-    cardRef.current.style.transform = `
-      perspective(1000px)
-      rotateY(${x * 8}deg)
-      rotateX(${-y * 8}deg)
-      scale(1.02)
-    `
-  }
-
-  const handleMouseLeave = () => {
-    setIsHovered(false)
-    if (cardRef.current) {
-      cardRef.current.style.transform = ''
-    }
-  }
+function ProjectPanel({ project, lang, onMouseMove, onMouseLeave, onProjectClick, setRef }: ProjectPanelProps) {
+  const title = lang === 'en' ? project.titleEn : project.title
+  const eyebrow = lang === 'en' ? project.eyebrowEn : project.eyebrow
+  const description = lang === 'en' ? project.descriptionEn : project.description
 
   return (
     <div
-      ref={cardRef}
-      className="hgallery__card"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ '--card-color': item.color } as React.CSSProperties}
+      ref={setRef}
+      className="project-showcase__panel"
+      style={{ '--project-accent': project.accent } as CSSProperties}
     >
-      {/* Media */}
-      <div className="hgallery__card-media">
-        {item.type === 'video' ? (
+      <div
+        className={`project-showcase__desktop ${project.url ? 'project-showcase__desktop--link' : ''}`}
+        onMouseMove={(event) => onMouseMove(event, project)}
+        onMouseLeave={onMouseLeave}
+        onClick={() => onProjectClick(project)}
+        role={project.url ? 'link' : undefined}
+        tabIndex={project.url ? 0 : undefined}
+        onKeyDown={(event) => {
+          if (project.url && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault()
+            onProjectClick(project)
+          }
+        }}
+      >
+        {project.desktopVideo ? (
           <video
-            ref={videoRef}
-            src={item.src}
+            className="project-showcase__video"
+            src={project.desktopVideo}
             muted
             loop
             playsInline
+            autoPlay
             preload="metadata"
+            aria-label={`${title} desktop preview`}
           />
         ) : (
-          <img src={item.src} alt={`${item.project} - ${item.label}`} />
+          <div className="project-showcase__placeholder" aria-hidden="true">
+            <span>{title}</span>
+          </div>
         )}
 
-        {/* Overlay gradient */}
-        <div className="hgallery__card-overlay" />
-      </div>
-
-      {/* Info */}
-      <div className="hgallery__card-info">
-        <span className="hgallery__card-project" style={{ color: item.color }}>
-          {item.project}
-        </span>
-        <span className="hgallery__card-label">{lang === 'en' ? item.labelEn : item.label}</span>
-      </div>
-
-      {/* Video indicator */}
-      {item.type === 'video' && (
-        <div className="hgallery__card-video-badge">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>
+        <div className="project-showcase__info">
+          <span className="project-showcase__eyebrow">{eyebrow}</span>
+          <h3>{title}</h3>
+          <p>{description}</p>
+          <div className="project-showcase__tags">
+            {project.tags.map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </div>
         </div>
-      )}
 
-      {/* Glow effect on hover */}
-      <div
-        className="hgallery__card-glow"
-        style={{
-          background: `radial-gradient(circle at center, ${item.color}22 0%, transparent 70%)`,
-        }}
-      />
+        <div className="project-showcase__phone" aria-label={`${title} mobile preview`}>
+          <div className="project-showcase__phone-speaker" />
+          <div className="project-showcase__phone-screen">
+            {project.mobileVideo ? (
+              <video
+                className="project-showcase__video"
+                src={project.mobileVideo}
+                muted
+                loop
+                playsInline
+                autoPlay
+                preload="metadata"
+              />
+            ) : (
+              <div className="project-showcase__phone-placeholder" aria-hidden="true" />
+            )}
+          </div>
+          <div className="project-showcase__phone-home" />
+        </div>
+      </div>
     </div>
   )
 }
