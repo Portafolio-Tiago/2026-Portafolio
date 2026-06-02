@@ -118,12 +118,6 @@ export default function HorizontalGallery() {
     setHoveredProjectId(null)
   }
 
-  const handleProjectClick = (project: ShowcaseProject) => {
-    if (!project.url) return
-
-    window.open(project.url, '_blank', 'noopener,noreferrer')
-  }
-
   return (
     <section className="project-showcase" id="trabajo">
       <div className="project-showcase__header">
@@ -147,7 +141,6 @@ export default function HorizontalGallery() {
               lang={lang}
               onMouseMove={handlePanelMouseMove}
               onMouseLeave={handlePanelMouseLeave}
-              onProjectClick={handleProjectClick}
               setRef={(node) => {
                 if (node) panelsRef.current[index] = node
               }}
@@ -185,14 +178,14 @@ interface ProjectPanelProps {
   lang: string
   onMouseMove: (event: MouseEvent, project: ShowcaseProject) => void
   onMouseLeave: () => void
-  onProjectClick: (project: ShowcaseProject) => void
   setRef: (node: HTMLDivElement | null) => void
 }
 
-function ProjectPanel({ project, lang, onMouseMove, onMouseLeave, onProjectClick, setRef }: ProjectPanelProps) {
+function ProjectPanel({ project, lang, onMouseMove, onMouseLeave, setRef }: ProjectPanelProps) {
   const title = lang === 'en' ? project.titleEn : project.title
   const eyebrow = lang === 'en' ? project.eyebrowEn : project.eyebrow
   const description = lang === 'en' ? project.descriptionEn : project.description
+  const ProjectShell = project.url ? 'a' : 'div'
 
   return (
     <div
@@ -200,19 +193,13 @@ function ProjectPanel({ project, lang, onMouseMove, onMouseLeave, onProjectClick
       className="project-showcase__panel"
       style={{ '--project-accent': project.accent } as CSSProperties}
     >
-      <div
+      <ProjectShell
         className={`project-showcase__desktop ${project.url ? 'project-showcase__desktop--link' : ''}`}
+        href={project.url}
+        target={project.url ? '_blank' : undefined}
+        rel={project.url ? 'noreferrer' : undefined}
         onMouseMove={(event) => onMouseMove(event, project)}
         onMouseLeave={onMouseLeave}
-        onClick={() => onProjectClick(project)}
-        role={project.url ? 'link' : undefined}
-        tabIndex={project.url ? 0 : undefined}
-        onKeyDown={(event) => {
-          if (project.url && (event.key === 'Enter' || event.key === ' ')) {
-            event.preventDefault()
-            onProjectClick(project)
-          }
-        }}
       >
         {project.desktopVideo ? (
           <video
@@ -261,7 +248,7 @@ function ProjectPanel({ project, lang, onMouseMove, onMouseLeave, onProjectClick
           </div>
           <div className="project-showcase__phone-home" />
         </div>
-      </div>
+      </ProjectShell>
     </div>
   )
 }
