@@ -12,9 +12,8 @@ const navIds = [
 ]
 
 const projectItems = [
-  { name: 'Tango Argentino', color: '#c0392b' },
   { name: 'Provex', color: '#2980b9' },
-  { name: 'Kiosco El Abuelo', color: '#27ae60' },
+  { name: 'Politon', color: '#27ae60' },
 ]
 
 export default function Navbar() {
