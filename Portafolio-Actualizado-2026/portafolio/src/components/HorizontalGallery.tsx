@@ -25,6 +25,8 @@ export default function HorizontalGallery() {
     const panels = panelsRef.current
     if (!section || !stage || panels.length === 0) return
 
+    const isMobile = window.matchMedia('(max-width: 900px)').matches
+
     const syncPanelVideos = (activeIndex: number) => {
       if (activeVideoIndexRef.current === activeIndex) return
       activeVideoIndexRef.current = activeIndex
@@ -38,6 +40,18 @@ export default function HorizontalGallery() {
           }
         })
       })
+    }
+
+    if (isMobile) {
+      panels.forEach((panel) => {
+        panel.querySelectorAll('video').forEach((video) => {
+          video.play().catch(() => {})
+        })
+      })
+
+      return () => {
+        document.body.classList.remove('project-hover')
+      }
     }
 
     const ctx = gsap.context(() => {
@@ -203,7 +217,7 @@ function ProjectPanel({ project, lang, onMouseMove, onMouseLeave, setRef }: Proj
       >
         {project.desktopVideo ? (
           <video
-            className="project-showcase__video"
+            className="project-showcase__video project-showcase__video--desktop"
             src={project.desktopVideo}
             muted
             loop
@@ -216,6 +230,19 @@ function ProjectPanel({ project, lang, onMouseMove, onMouseLeave, setRef }: Proj
           <div className="project-showcase__placeholder" aria-hidden="true">
             <span>{title}</span>
           </div>
+        )}
+
+        {project.mobileVideo && (
+          <video
+            className="project-showcase__video project-showcase__video--mobile"
+            src={project.mobileVideo}
+            muted
+            loop
+            playsInline
+            autoPlay
+            preload="metadata"
+            aria-label={`${title} mobile preview`}
+          />
         )}
 
         <div className="project-showcase__info">

@@ -25,11 +25,6 @@ export default function Hero() {
       <div className="container hero__inner">
         {/* Left — Content */}
         <motion.div className="hero__content" variants={container} initial="hidden" animate="show">
-          <motion.div className="hero__badge" variants={fadeUp}>
-            <span className="hero__badge-dot" />
-            <span className="hero__badge-text">{t('hero.available')}</span>
-          </motion.div>
-
           <motion.div className="hero__text" variants={fadeUp}>
             <div className="hero__line">
               <motion.span className="hero__line-inner" style={{ fontSize: 'clamp(28px, 4vw, 52px)', fontWeight: 300, color: 'var(--text-muted)' }} variants={lineAnim} initial="hidden" animate="show">
@@ -78,15 +73,6 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <motion.div
-        className="hero__scroll"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.6 }}
-      >
-        <span>{t('hero.scroll')}</span>
-        <div className="hero__scroll-line" />
-      </motion.div>
     </section>
   )
 }

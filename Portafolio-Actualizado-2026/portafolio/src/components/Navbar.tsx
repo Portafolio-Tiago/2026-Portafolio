@@ -49,7 +49,7 @@ export default function Navbar() {
           >
             {lang === 'es' ? 'EN' : 'ES'}
           </button>
-          <a href="mailto:tiagodavila08@gmail.com" className="pill-btn pill-btn--primary">{t('nav.contact')}</a>
+          <a href="mailto:tiagodavila08@gmail.com" className="pill-btn pill-btn--primary navbar__contact">{t('nav.contact')}</a>
           <button className="pill-btn pill-btn--secondary" onClick={() => setMenuOpen(true)}>{t('nav.menu')}</button>
         </div>
       </nav>
@@ -99,7 +99,7 @@ export default function Navbar() {
               <div className="menu-section">
                 <span className="section-label">{t('nav.follow')}</span>
                 {[
-                  { label: 'GitHub', href: 'https://github.com/portafoliotiago' },
+                  { label: 'GitHub', href: 'https://github.com/Tiago-Davila' },
                   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/tiago-davila-895b51231/' },
                   { label: 'Email', href: 'mailto:tiagodavila08@gmail.com' },
                 ].map((s, i) => (

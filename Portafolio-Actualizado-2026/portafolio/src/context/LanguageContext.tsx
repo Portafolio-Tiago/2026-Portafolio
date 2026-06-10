@@ -17,7 +17,7 @@ export const translations = {
     'nav.menu': 'Menú',
     'nav.sitemap': 'Sitemap',
     'nav.projects': 'Proyectos',
-    'nav.follow': 'Sígueme',
+    'nav.follow': 'Seguime',
 
     // Sidebar sections
     'section.inicio': 'Inicio',
@@ -31,7 +31,7 @@ export const translations = {
     'hero.greeting': 'Hola, soy',
     'hero.line1': 'Diseño &',
     'hero.line2': 'Desarrollo',
-    'hero.bio': 'Desarrollador de aplicaciones full-stack con foco en interfaces modernas, con atención al detalle y desarrollo backend funcional.',
+    'hero.bio': 'Desarrollo productos web rápidos, interfaces con backend real y apps pensadas para colegios, servicios y proyectos que necesitan funcionar bien de punta a punta.',
     'hero.cta.projects': 'Ver proyectos',
     'hero.cta.about': 'Sobre mí',
     'hero.scroll': 'Scroll',
@@ -40,7 +40,7 @@ export const translations = {
     'about.label': 'Sobre mí',
     'about.heading1': 'Lo que',
     'about.heading2': 'hago',
-    'about.bio': 'Soy <strong>Tiago Dávila</strong>, desarrollador full-stack. Diseño y desarrollo aplicaciones, utilizando mis conocimientos de back y frontend, con proyectos que van desde sitios web normales hasta APIs con springboot.<br/><br/>Actualmente estudio en el <strong>Instituto Politécnico Modelo</strong>, donde estoy cursando mi ultimo año, sigo ampliando mis conocimientos en desarrollo de aplicaciones web. Me enfoco en la intersección entre el diseño visual y el uso de herramientas backend.',
+    'about.bio': 'Soy <strong>Tiago Dávila</strong>, desarrollador full-stack. Diseño y desarrollo productos web rápidos, interfaces claras y aplicaciones con backend real, conectando frontend, APIs y bases de datos para que cada proyecto funcione de punta a punta.<br/><br/>Actualmente estudio en el <strong>Instituto Politécnico Modelo</strong>, donde estoy cursando mi último año. Sigo ampliando mis conocimientos en desarrollo de aplicaciones web y me enfoco en proyectos para colegios, servicios y herramientas digitales que combinen buena experiencia visual con una base técnica sólida.',
     'about.s1.title': 'Desarrollo Frontend',
     'about.s1.desc': 'Interfaces con React, animaciones fluidas con GSAP y framer motion.',
     'about.s2.title': 'Desarrollo Backend',
@@ -49,7 +49,7 @@ export const translations = {
     'about.s3.desc': 'Diseño de interfaces en Figma con foco en la experiencia de usuario, jerarquía visual y sistemas de diseño.',
 
     // Skills
-    'skills.label': 'Stack tecnico',
+    'skills.label': 'Stack técnico',
     'skills.title': 'Habilidades',
 
     // Work / Gallery
@@ -82,7 +82,7 @@ export const translations = {
     'hero.greeting': 'Hi, I\'m',
     'hero.line1': 'Design &',
     'hero.line2': 'Development',
-    'hero.bio': 'Full-stack application developer focused on modern interfaces, with attention to detail and functional backend development.',
+    'hero.bio': 'I build fast web products, interfaces backed by real backend systems, and apps for schools, services, and projects that need to work well end to end.',
     'hero.cta.projects': 'View projects',
     'hero.cta.about': 'About me',
     'hero.scroll': 'Scroll',
@@ -91,7 +91,7 @@ export const translations = {
     'about.label': 'About me',
     'about.heading1': 'What I',
     'about.heading2': 'do',
-    'about.bio': 'I\'m <strong>Tiago Dávila</strong>, a full-stack developer. I design and develop applications using my knowledge of both frontend and backend, with projects ranging from regular websites to Spring Boot APIs.<br/><br/>I\'m currently studying at <strong>Instituto Politécnico Modelo</strong>, in my final year, continuously expanding my knowledge in web application development. I focus on the intersection of visual design and backend tooling.',
+    'about.bio': 'I\'m <strong>Tiago Dávila</strong>, a full-stack developer. I design and build fast web products, clear interfaces, and applications backed by real backend systems, connecting frontend, APIs, and databases so each project works end to end.<br/><br/>I\'m currently studying at <strong>Instituto Politécnico Modelo</strong>, in my final year. I keep expanding my web development skills and focus on projects for schools, services, and digital tools that combine a strong visual experience with solid technical foundations.',
     'about.s1.title': 'Frontend Development',
     'about.s1.desc': 'Interfaces with React, smooth animations with GSAP and Framer Motion.',
     'about.s2.title': 'Backend Development',

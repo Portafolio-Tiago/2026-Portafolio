@@ -79,7 +79,7 @@ export default function Contact() {
         <span className="footer__left">T.</span>
         <span className="footer__copy">{t('footer.copy')}</span>
         <nav className="footer__links">
-          <a href="https://github.com/Tiago-Davila'" target="_blank" rel="noopener noreferrer" className="footer__link">GitHub</a>
+          <a href="https://github.com/Tiago-Davila" target="_blank" rel="noopener noreferrer" className="footer__link">GitHub</a>
           <a href="https://www.linkedin.com/in/tiago-davila-895b51231/" target="_blank" rel="noopener noreferrer" className="footer__link">LinkedIn</a>
           <a href="mailto:tiagodavila08@gmail.com" className="footer__link">Email</a>
         </nav>
